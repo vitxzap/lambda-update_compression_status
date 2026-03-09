@@ -1,4 +1,3 @@
-
 import { Context, S3Event, S3Handler } from 'aws-lambda';
 import { readFileSync } from 'node:fs';
 import { Pool } from "pg"
@@ -25,16 +24,14 @@ export const handler: S3Handler = async (event: S3Event, context: Context) => {
     const { object } = event.Records[0].s3
     const [rootFolder, userId, compressionId, filename] = object.key.split("/")
     try {
-        const query = await client.query(`UPDATE ${process.env.COMPRESSION_TABLE} 
+        await client.query(`UPDATE ${process.env.COMPRESSION_TABLE} 
             SET 
             "originalName" = $1, 
             "originalSize" = $2, 
             status = $3, 
             "s3Key" = $4
             WHERE id = $5
-            RETURNING status
             `, [filename, object.size, "CREATED", object.key, compressionId])
-
     }
     catch (err) {
         throw err
