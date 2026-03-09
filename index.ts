@@ -11,7 +11,8 @@ const pool = new Pool({
     database: process.env.DB_NAME,
     max: 1,
     ssl: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: true,
+        requestCert: true,
         ca: cert
     },
     idleTimeoutMillis: 30000,
@@ -36,7 +37,6 @@ export const handler: S3Handler = async (event: S3Event, context: Context) => {
 
     }
     catch (err) {
-        console.error("Unexpected error: ", err)
         throw err
     }
     finally {
